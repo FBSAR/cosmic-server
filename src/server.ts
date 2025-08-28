@@ -1,22 +1,18 @@
-import { createServer } from "http";
+import express from "express";
+import cors from "cors";
+import { leaderboardRouter } from "./routes/leaderboard";
 
-const server = createServer((req, res) => {
-  // Simple routing logic
-  if (req.method === "GET" && req.url === "/api/hello") {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ message: "Hello from API!" }));
-  } 
-  else if (req.method === "GET" && req.url === "/") {
-    res.writeHead(200, { "Content-Type": "text/plain" });
-    res.end("Hello World!\n");
-  } 
-  else {
-    res.writeHead(404, { "Content-Type": "text/plain" });
-    res.end("Not Found");
-  }
-});
+const app = express();
+const PORT = 3000;
 
-// starts a simple http server locally on port 3000
-server.listen(3000, "127.0.0.1", () => {
-  console.log("Listening on http://127.0.0.1:3000");
+// Middleware
+app.use(cors());
+app.use(express.json()); // parses JSON body automatically
+
+// Routes
+app.use("/api/leaderboard", leaderboardRouter);
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server running at http://127.0.0.1:${PORT}`);
 });
