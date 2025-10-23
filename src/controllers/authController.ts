@@ -2,11 +2,32 @@ import prisma from "../db/prisma";
 
 // Login
 export const sixDigitCodeLogin = async (email: string) => {
-    // console.log(`Sign Up successful from email: ${email}, by Username: ${username}` );
-    // return { message: `Sign Up successful from email: ${email}, by Username: ${username}` };
-  return prisma.survivalLeaderboard.findMany({
-    orderBy: { points: "desc" },
-  });
+  try {
+    // 🔍 1. Check if email exists in Player table
+    const existingPlayer = await prisma.player.findUnique({
+      where: { email },
+    });
+
+    if (existingPlayer) {
+      // ✅ Player exists
+      return {
+        exists: true,
+        message: `Player with email ${email} found.`,
+      };
+    }
+
+    // ❌ No existing player — generate 6-digit code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+    return {
+      exists: false,
+      code,
+      message: "No existing player found. 6-digit code generated.",
+    };
+  } catch (error) {
+    console.error("Error in sixDigitCodeLogin:", error);
+    throw new Error("Failed to process login.");
+  }
 };
 export const login = async (email: string) => {
     console.log(`Login successful from email: ${email}` );
