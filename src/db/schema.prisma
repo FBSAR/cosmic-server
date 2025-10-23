@@ -9,6 +9,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Player {
+  email     String  @id
+  username  String  @unique
+  createdAt DateTime @default(now())
+}
+
 model SurvivalLeaderboard {
   id        Int      @id @default(autoincrement())
   username  String   @unique
