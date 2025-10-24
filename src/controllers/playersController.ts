@@ -6,6 +6,11 @@ export const getAllPlayers = async () => {
     orderBy: { createdAt: "desc" }
   });
 }
+export const getPlayerByEmail = async (email: string) => {
+  return prisma.player.findUnique({
+    where: { email },
+  });
+};
 
 export const deletePlayer = async (email: string) => {
   try {
