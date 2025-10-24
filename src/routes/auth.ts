@@ -20,6 +20,6 @@ authRouter.post("/six-digit-code-sign-up", async (req, res) => {
 });
 authRouter.post("/sign-up", async (req, res) => {
   const { email, username } = req.body;
-  const entry = await signUp(email, username);
+  const entry = await signUp(username, email);
   res.status(201).json(entry);
 });

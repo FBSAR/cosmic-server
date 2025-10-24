@@ -74,10 +74,32 @@ export const sixDigitCodeSignUp = async (email: string, username: string) => {
     throw new Error("Failed to generate code or check player existence.");
   }
 };
-export const signUp = async (email: string, username: string) => {
-    // console.log(`Sign Up successful from email: ${email}, by Username: ${username}` );
-    // return { message: `Sign Up successful from email: ${email}, by Username: ${username}` };
-  return prisma.survivalLeaderboard.findMany({
-    orderBy: { points: "desc" },
-  });
+export const signUp = async (username: string, email: string) => {
+  try {
+    // Check if player already exists by email or username
+    const existingPlayer = await prisma.player.findUnique({
+      where: { email },
+    });
+
+    if (existingPlayer) {
+      return { message: "Player already exists", player: existingPlayer };
+    }
+
+    // Create a new player
+    const newPlayer = await prisma.player.create({
+      data: {
+        username,
+        email,
+      },
+    });
+
+    console.log("New player created:", newPlayer);
+    return {
+      message: "Sign up successful",
+      player: newPlayer,
+    };
+  } catch (error) {
+    console.error("Error creating player:", error);
+    throw new Error("Failed to create player");
+  }
 };
