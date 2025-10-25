@@ -13,6 +13,7 @@ export const sixDigitCodeLogin = async (email: string) => {
     });
 
     if (!existingPlayer) {
+      console.log(`No player found with email: ${email}`);
       return {
         exists: false,
         message: "No player found with this email.",
@@ -137,7 +138,6 @@ export const sixDigitCodeSignUp = async (email: string, username: string) => {
     throw new Error("Failed to send verification email.");
   }
 };
-
 export const signUp = async (username: string, email: string) => {
   try {
     // Check if player already exists by email or username
