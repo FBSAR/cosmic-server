@@ -1,7 +1,6 @@
-import { dot } from "node:test/reporters";
 import prisma from "../db/prisma";
 import nodemailer from "nodemailer";
-// import dotenv from "dotenv";
+import 'dotenv/config'; // or import dotenv from 'dotenv'; 
 // dotenv.config();
 
 // Login
@@ -29,8 +28,10 @@ export const sixDigitCodeLogin = async (email: string) => {
       port: 465,
       secure: true,
       auth: {
-        user: "eddie@finalbossxr.com",
-        pass: "bossfinaL7$", // move to env variable for security
+        // user: "eddie@finalbossxr.com",
+        // pass: "bossfinaL7$",
+        user: process.env.VERCEL_EMAIL_USER,
+        pass: process.env.VERCEL_EMAIL_PASS,
       },
     });
 
@@ -61,18 +62,10 @@ export const sixDigitCodeLogin = async (email: string) => {
       code: code,
       message: "6-digit login code sent to email.",
     };
-  } catch (err) {
+  } catch (err: any) {
     console.error("Error in sixDigitCodeLogin:", err);
-    throw new Error("Failed to send login code.");
+    throw new Error(`Failed to send login code: ${err.message}`);
   }
-};
-export const login = async (email: string) => {
-    console.log(`Login successful from email: ${email}` );
-    return { message: `Login successful from email: ${email}` };
-//   return prisma.survivalLeaderboard.findMany({
-//     orderBy: { points: "desc" },
-//     take: limit,
-//   });
 };
 
 // Sign Up

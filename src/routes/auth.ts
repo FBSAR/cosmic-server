@@ -1,13 +1,8 @@
 import { Router } from "express";
-import { login, sixDigitCodeLogin, signUp, sixDigitCodeSignUp } from "../controllers/authController";
+import { sixDigitCodeLogin, signUp, sixDigitCodeSignUp } from "../controllers/authController";
 
 export const authRouter = Router();
 
-authRouter.post("/", async (req, res) => {
-  const { email } = req.body;
-  const entry = await login(email);
-  res.status(201).json(entry);
-});
 authRouter.post("/six-digit-code-login", async (req, res) => {
   const { email } = req.body;
   const entry = await sixDigitCodeLogin(email);
