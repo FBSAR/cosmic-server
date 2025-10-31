@@ -1,26 +1,29 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { getAllPlayers, getPlayerByEmail } from '../../src/controllers/playersController';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    const ec2Url = 'http://54.174.124.249:3000/api/players';
+    if (req.method === 'GET') {
+      // ✅ Optional query param: /api/players?email=example@email.com
+      const { email } = req.query;
 
-    const headersObj = req.headers as Record<string, string | string[] | undefined>;
-    const outboundHeaders: Record<string, string> = {};
-    for (const [key, value] of Object.entries(headersObj)) {
-      if (key.toLowerCase() === 'host' || value === undefined) continue;
-      outboundHeaders[key] = Array.isArray(value) ? value.join(',') : String(value);
+      if (email && typeof email === 'string') {
+        const player = await getPlayerByEmail(email);
+        if (!player) {
+          return res.status(404).json({ message: 'Player not found' });
+        }
+        return res.status(200).json(player);
+      }
+
+      // ✅ Return all players if no email is provided
+      const players = await getAllPlayers();
+      return res.status(200).json(players);
     }
 
-    const response = await fetch(ec2Url, {
-      method: req.method,
-      headers: outboundHeaders,
-      body: req.method !== 'GET' ? JSON.stringify(req.body) : undefined,
-    });
+    return res.status(405).json({ message: 'Method Not Allowed' });
 
-    const data = await response.text();
-    res.status(response.status).send(data);
-  } catch (err) {
-    console.error('Proxy error:', err);
-    res.status(500).json({ error: 'Failed to fetch from EC2 API' });
+  } catch (error) {
+    console.error('Error in /api/players:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
 }
