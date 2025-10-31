@@ -20,6 +20,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json(players);
     }
 
+    if (req.method === 'POST') {
+      // ✅ Lookup player by email (same as your Express POST)
+      const { email } = req.body;
+      if (!email) {
+        return res.status(400).json({ message: 'Email is required' });
+      }
+
+      const player = await getPlayerByEmail(email);
+      if (!player) {
+        return res.status(404).json({ message: 'Player not found' });
+      }
+
+      return res.status(200).json(player);
+    }
+
+    // ❌ Unsupported method
     return res.status(405).json({ message: 'Method Not Allowed' });
 
   } catch (error) {
