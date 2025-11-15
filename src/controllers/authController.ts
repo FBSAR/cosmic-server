@@ -160,3 +160,38 @@ export const signUp = async (username: string, email: string) => {
     throw new Error("Failed to create player");
   }
 };
+
+// Settings Page Functions
+export const updateEmail = async (email: string, newEmail: string) => {
+  try {
+    const updatedPlayer = await prisma.player.update({
+      where: { email },
+      data: { email: newEmail },
+    });
+
+    return {
+      message: "Email updated successfully",
+      player: updatedPlayer,
+    };
+  } catch (error) {
+    console.error("Error updating email:", error);
+    throw new Error("Failed to update email");
+  }
+};
+
+export const updateUsername = async (email: string, newUsername: string) => {
+  try {
+    const updatedPlayer = await prisma.player.update({
+      where: { email },
+      data: { username: newUsername },
+    });
+
+    return {
+      message: "Username updated successfully",
+      player: updatedPlayer,
+    };
+  } catch (error) {
+    console.error("Error updating username:", error);
+    throw new Error("Failed to update username");
+  }
+};
