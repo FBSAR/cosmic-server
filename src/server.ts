@@ -4,6 +4,7 @@ import "dotenv/config";
 import { leaderboardRouter } from "./routes/leaderboard";
 import { playerRouter } from "./routes/players";
 import { authRouter } from "./routes/auth";
+import { multiplayerRouter } from "./routes/multiplayer";
 
 const app = express();
 const PORT = 3000;
@@ -16,6 +17,7 @@ app.use(express.json()); // parses JSON body automatically
 app.use("/api/leaderboard", leaderboardRouter);
 app.use("/api/players", playerRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/multiplayer", multiplayerRouter);
 
 // Start server
 app.listen(PORT, () => {
