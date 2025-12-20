@@ -9,27 +9,110 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Player {
-  email     String  @id
-  username  String  @unique
-  createdAt DateTime @default(now())
+enum CharacterType {
+  CAPTAIN_PHOENIX
+  RILEY
+  XYLO
+  JOHNNY
+  AI_WRAITH
 }
 
+enum SkillCategory {
+  SPECIAL
+  HEALTH
+  DEFENSE
+  ATTACK
+  SPEED
+}
+
+// --- Player & Stats ---
+
+model Player {
+  email        String   @id
+  username     String   @unique
+  createdAt    DateTime @default(now())
+
+  characters   CharacterStats[]
+  
+  // Leaderboards
+  survivalScores SurvivalLeaderboard[]
+  flightScores   FlightLeaderboard[]
+}
+
+model CharacterStats {
+  id          Int           @id @default(autoincrement())
+  playerEmail String
+  player      Player        @relation(fields: [playerEmail], references: [email], onDelete: Cascade)
+  
+  type        CharacterType 
+  
+  level       Int           @default(1) // Overall character level
+  xp          Int           @default(0) // Spendable XP (Currency seen in screenshot)
+  lives       Int           @default(3) 
+  
+  // Relation: Tracks the upgrade level for each category (Health, Attack, etc.)
+  upgrades    CharacterAttributeProgress[]
+
+  updatedAt   DateTime      @updatedAt
+
+  @@unique([playerEmail, type])
+}
+
+// --- The Skill System ---
+
+// 1. DYNAMIC: Stores the user's current level (e.g., Attack Level 3)
+model CharacterAttributeProgress {
+  id               Int            @id @default(autoincrement())
+  
+  characterStatsId Int
+  characterStats   CharacterStats @relation(fields: [characterStatsId], references: [id], onDelete: Cascade)
+
+  category         SkillCategory  // e.g. ATTACK
+  currentLevel     Int            @default(0) // 0 means nothing unlocked. 1 means Tier 1 unlocked.
+
+  @@unique([characterStatsId, category]) // One progress entry per category per character
+}
+
+// 2. STATIC: Defines the actual tree (Names, Descriptions, Costs)
+// This serves as the lookup table for your UI.
+model SkillNodeDefinition {
+  id            Int           @id @default(autoincrement())
+  
+  characterType CharacterType // Defines whose tree this belongs to
+  category      SkillCategory // e.g. SPECIAL
+  tier          Int           // 1, 2, 3, 4, 5 (The position in the line)
+  
+  name          String        // e.g. "Enhanced Piercing"
+  description   String        // e.g. "Projectiles pierce 2 targets"
+  xpCost        Int           // e.g. 1000
+  
+  // Optional: Store the actual stat effect for game logic
+  // e.g. { "projectileSpeed": 1.5 } or { "healthMax": 10 }
+  effectMetadata Json?        
+
+  @@unique([characterType, category, tier]) // Ensure no duplicate tiers for the same track
+}
+
+// --- Leaderboards (Unchanged) ---
+
 model SurvivalLeaderboard {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  points    Int
-  wave      Int
-  time      Float
-  createdAt DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  playerEmail   String   
+  player        Player   @relation(fields: [playerEmail], references: [email])
+  characterUsed CharacterType? 
+  points        Int
+  wave          Int
+  time          Float
+  createdAt     DateTime @default(now())
+  @@unique([playerEmail]) 
 }
 
 model FlightLeaderboard {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  time      Float
-  createdAt DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  playerEmail   String
+  player        Player   @relation(fields: [playerEmail], references: [email])
+  characterUsed CharacterType?
+  time          Float
+  createdAt     DateTime @default(now())
+  @@unique([playerEmail])
 }
-
-
-
