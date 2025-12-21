@@ -97,22 +97,22 @@ model SkillNodeDefinition {
 
 model SurvivalLeaderboard {
   id            Int      @id @default(autoincrement())
-  playerEmail   String   
+  playerEmail   String  // Temporarily optional
   player        Player   @relation(fields: [playerEmail], references: [email])
   characterUsed CharacterType? 
   points        Int
   wave          Int
   time          Float
   createdAt     DateTime @default(now())
-  @@unique([playerEmail]) 
+  @@unique([playerEmail])  // Keep unique, but it will allow nulls
 }
 
 model FlightLeaderboard {
   id            Int      @id @default(autoincrement())
-  playerEmail   String
+  playerEmail   String  // Temporarily optional
   player        Player   @relation(fields: [playerEmail], references: [email])
   characterUsed CharacterType?
   time          Float
   createdAt     DateTime @default(now())
-  @@unique([playerEmail])
+  @@unique([playerEmail])  // Keep unique, but it will allow nulls
 }
