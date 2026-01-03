@@ -181,6 +181,17 @@ export const updateEmail = async (email: string, newEmail: string) => {
 
 export const updateUsername = async (email: string, newUsername: string) => {
   try {
+    // Check if player exists
+    const existingPlayer = await prisma.player.findUnique({
+      where: { email },
+    });
+
+    if (!existingPlayer) {
+      return {
+        message: "Player not found with this email.",
+      };
+    }
+
     const updatedPlayer = await prisma.player.update({
       where: { email },
       data: { username: newUsername },
