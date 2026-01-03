@@ -33,5 +33,4 @@ graph TD
 
     I --> O
     I --> P
-```</content>
-<parameter name="filePath">c:\Users\eddie\OneDrive\Documents\Web Projects\cosmic-server\architecture\backend_architecture.md
+```
