@@ -25,7 +25,7 @@ export const sixDigitCodeLogin = async (email: string) => {
     // 3️⃣ Send the code via email
     const transporter = nodemailer.createTransport({
       host: "mail.spacemail.com",
-      port: 587,
+      port: 465,
       secure: true,
       auth: {
         // user: "eddie@finalbossxr.com",
@@ -120,8 +120,8 @@ export const sixDigitCodeSignUp = async (email: string, username: string) => {
     // 3️⃣ Send email with Nodemailer
     const transporter = nodemailer.createTransport({
       host: "mail.spacemail.com", // check your Spacemail control panel for this
-      port: 587, // use 587 for SSL or 587 for TLS
-      secure: true, // true for 587, false for 587
+      port: 465, // use 465 for SSL or 587 for TLS
+      secure: true, // true for 465, false for 587
       auth: {
         user: "eddie@finalbossxr.com",
         pass: "bossfinaL7$", // consider using process.env vars instead!
@@ -184,7 +184,7 @@ export const signUp = async (username: string, email: string) => {
     // Send success email
     const transporter = nodemailer.createTransport({
       host: "mail.spacemail.com",
-      port: 587,
+      port: 465,
       secure: true,
       auth: {
         user: "eddie@finalbossxr.com",
@@ -243,7 +243,7 @@ export const updateEmail = async (email: string, newEmail: string) => {
     // Send success email to new email
     const transporter = nodemailer.createTransport({
       host: "mail.spacemail.com",
-      port: 587,
+      port: 465,
       secure: true,
       auth: {
         user: "eddie@finalbossxr.com",
@@ -336,7 +336,7 @@ export const sixDigitCodeUpdateEmail = async (currentEmail: string, newEmail: st
     // 4️⃣ Send email with Nodemailer to new email
     const transporter = nodemailer.createTransport({
       host: "mail.spacemail.com",
-      port: 587,
+      port: 465,
       secure: true,
       auth: {
         user: "eddie@finalbossxr.com",
@@ -398,7 +398,7 @@ export const updateUsername = async (email: string, newUsername: string) => {
     // Send success email
     const transporter = nodemailer.createTransport({
       host: "mail.spacemail.com",
-      port: 587,
+      port: 465,
       secure: true,
       auth: {
         user: "eddie@finalbossxr.com",
@@ -483,7 +483,7 @@ export const sixDigitCodeUpdateUsername = async (email: string, newUsername: str
     // 4️⃣ Send email with Nodemailer to current email
     const transporter = nodemailer.createTransport({
       host: "mail.spacemail.com",
-      port: 587,
+      port: 465,
       secure: true,
       auth: {
         user: "eddie@finalbossxr.com",
@@ -545,7 +545,7 @@ export const deleteProfile = async (email: string) => {
     // Send success email (before deletion, but since email is key, send now)
     const transporter = nodemailer.createTransport({
       host: "mail.spacemail.com",
-      port: 587,
+      port: 465,
       secure: true,
       auth: {
         user: "eddie@finalbossxr.com",
@@ -625,7 +625,7 @@ export const sixDigitCodeDeleteProfile = async (email: string) => {
     // 3️⃣ Send email with Nodemailer
     const transporter = nodemailer.createTransport({
       host: "mail.spacemail.com",
-      port: 587,
+      port: 465,
       secure: true,
       auth: {
         user: "eddie@finalbossxr.com",
