@@ -1,16 +1,16 @@
 import prisma from "../db/prisma";
 
 // ----- Survival Mode -----
-export const addOrUpdateSurvivalScore = async (username: string, points: number, wave: number, time: number) => {
+export const addOrUpdateSurvivalScore = async (playerEmail: string, points: number, wave: number, time: number) => {
   return prisma.survivalLeaderboard.upsert({
-    where: { username },
+    where: { playerEmail },
     update: {
       // Only update if the new score is higher
       points: points,  
       wave: wave,
       time: time
     },
-    create: { username, points, wave, time },
+    create: { playerEmail, points, wave, time },
   });
 };
 
@@ -22,14 +22,14 @@ export const getTopSurvival = async (limit: number = 10) => {
 };
 
 // ----- Flight Mode -----
-export const addOrUpdateFlightScore = async (username: string, time: number) => {
+export const addOrUpdateFlightScore = async (playerEmail: string, time: number) => {
   return prisma.flightLeaderboard.upsert({
-    where: { username },
+    where: { playerEmail },
     update: {
       // Only update if the new time is better (lower)
       time: time
     },
-    create: { username, time },
+    create: { playerEmail, time },
   });
 };
 

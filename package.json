@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "nodemon",
-    "build": "prisma generate && tsc",
+    "build": "prisma generate --schema=./src/db/schema.prisma && tsc",
     "start": "node dist/server.js",
-    "postinstall": "npx prisma generate --schema=./src/db/schema.prisma"
+    "postinstall": "prisma generate --schema=./src/db/schema.prisma"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
