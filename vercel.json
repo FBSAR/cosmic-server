@@ -9,6 +9,12 @@
     { "src": "/api/auth/six-digit-code-login", "dest": "/api/auth/six-digit-code-login.ts" },
     { "src": "/api/auth/six-digit-code-sign-up", "dest": "/api/auth/six-digit-code-sign-up.ts" },
     { "src": "/api/auth/sign-up", "dest": "/api/auth/sign-up.ts" },
+    { "src": "/api/auth/six-digit-code-update-email", "dest": "/api/auth/six-digit-code-update-email.ts" },
+    { "src": "/api/auth/six-digit-code-update-username", "dest": "/api/auth/six-digit-code-update-username.ts" },
+    { "src": "/api/auth/six-digit-code-delete-profile", "dest": "/api/auth/six-digit-code-delete-profile.ts" },
+    { "src": "/api/auth/update-email", "dest": "/api/auth/update-email.ts" },
+    { "src": "/api/auth/update-username", "dest": "/api/auth/update-username.ts" },
+    { "src": "/api/auth/delete-profile", "dest": "/api/auth/delete-profile.ts" },
     
     { "src": "/api/leaderboards/flight", "dest": "/api/leaderboards/flight.ts" },
     { "src": "/api/leaderboards/survival", "dest": "/api/leaderboards/survival.ts" }
