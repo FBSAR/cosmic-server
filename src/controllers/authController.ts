@@ -1,7 +1,27 @@
 import prisma from "../db/prisma";
 import nodemailer from "nodemailer";
-import 'dotenv/config'; // or import dotenv from 'dotenv'; 
-// dotenv.config();
+import 'dotenv/config';
+
+// Create Nodemailer transporter for Spacemail (Privateemail)
+const transporter = nodemailer.createTransport({
+  host: 'mail.spacemail.com',
+  port: 465,
+  secure: true, // use SSL
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+// Helper function to send email using Nodemailer
+const sendEmail = async (mailOptions: nodemailer.SendMailOptions) => {
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error("Error sending email with Nodemailer:", error);
+    throw error;
+  }
+};
 
 // Login
 export const sixDigitCodeLogin = async (email: string) => {
@@ -23,25 +43,9 @@ export const sixDigitCodeLogin = async (email: string) => {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
     // 3️⃣ Send the code via email
-    const transporter = nodemailer.createTransport({
-      host: "mail.spacemail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        // user: "eddie@finalbossxr.com",
-        // pass: "bossfinaL7$",
-        user: process.env.VERCEL_EMAIL_USER,
-        pass: process.env.VERCEL_EMAIL_PASS,
-      },
-    });
-
     const mailOptions = {
-      from: '"Cosmic Collisions" <eddie@finalbossxr.com>',
+      from: "eddie@finalbossxr.com", // Must be verified in SendGrid
       to: email,
-      envelope: {
-        from: 'eddie@finalbossxr.com',
-        to: email,
-      },
       subject: "Your 6-Digit Login Code",
       text: `Your login code is: ${code}`,
       html: `
@@ -55,16 +59,12 @@ export const sixDigitCodeLogin = async (email: string) => {
     };
 
     console.log("Sending login email:", mailOptions);
-    await transporter.sendMail(mailOptions);
+    await sendEmail(mailOptions);
 
     // Send additional success notification
     const successMailOptions = {
-      from: '"Cosmic Collisions" <eddie@finalbossxr.com>',
+      from: "eddie@finalbossxr.com",
       to: email,
-      envelope: {
-        from: 'eddie@finalbossxr.com',
-        to: email,
-      },
       subject: "Login Code Sent",
       text: `We have sent you a 6-digit login code to your email.`,
       html: `
@@ -79,7 +79,7 @@ export const sixDigitCodeLogin = async (email: string) => {
     // Send email asynchronously
     setImmediate(async () => {
       try {
-        await transporter.sendMail(successMailOptions);
+        await sendEmail(successMailOptions);
         console.log("Login code notification sent to:", email);
       } catch (err) {
         console.error("Error sending login code notification:", err);
@@ -117,24 +117,10 @@ export const sixDigitCodeSignUp = async (email: string, username: string) => {
     // 2️⃣ Generate random 6-digit code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // 3️⃣ Send email with Nodemailer
-    const transporter = nodemailer.createTransport({
-      host: "mail.spacemail.com", // check your Spacemail control panel for this
-      port: 465, // use 465 for SSL or 587 for TLS
-      secure: true, // true for 465, false for 587
-      auth: {
-        user: "eddie@finalbossxr.com",
-        pass: "bossfinaL7$", // consider using process.env vars instead!
-      },
-    });
-
+    // 3️⃣ Send email with SendGrid
     const mailOptions = {
-      from: '"Cosmic Collisions" <eddie@finalbossxr.com>',
+      from: "eddie@finalbossxr.com",
       to: email,
-      envelope: {
-        from: 'eddie@finalbossxr.com', // MUST match your auth.user
-        to: email
-  },
       subject: "Your 6-Digit Verification Code",
       text: `Your verification code is: ${code}`,
       html: `
@@ -148,7 +134,7 @@ export const sixDigitCodeSignUp = async (email: string, username: string) => {
     };
 
     console.log("Sending email with options:", mailOptions);
-    await transporter.sendMail(mailOptions);
+    await sendEmail(mailOptions);
 
     return {
       exists: false,
@@ -182,23 +168,9 @@ export const signUp = async (username: string, email: string) => {
     console.log("New player created:", newPlayer);
 
     // Send success email
-    const transporter = nodemailer.createTransport({
-      host: "mail.spacemail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: "eddie@finalbossxr.com",
-        pass: "bossfinaL7$",
-      },
-    });
-
     const successMailOptions = {
-      from: '"Cosmic Collisions" <eddie@finalbossxr.com>',
+      from: "eddie@finalbossxr.com",
       to: email,
-      envelope: {
-        from: 'eddie@finalbossxr.com',
-        to: email,
-      },
       subject: "Welcome to Cosmic Collisions!",
       text: `Welcome ${username}! Your account has been created successfully.`,
       html: `
@@ -214,7 +186,7 @@ export const signUp = async (username: string, email: string) => {
     // Send email asynchronously without blocking
     setImmediate(async () => {
       try {
-        await transporter.sendMail(successMailOptions);
+        await sendEmail(successMailOptions);
         console.log("Welcome email sent to:", email);
       } catch (err) {
         console.error("Error sending welcome email:", err);
@@ -241,23 +213,9 @@ export const updateEmail = async (email: string, newEmail: string) => {
     });
 
     // Send success email to new email
-    const transporter = nodemailer.createTransport({
-      host: "mail.spacemail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: "eddie@finalbossxr.com",
-        pass: "bossfinaL7$",
-      },
-    });
-
     const successMailOptions = {
-      from: '"Cosmic Collisions" <eddie@finalbossxr.com>',
+      from: "eddie@finalbossxr.com",
       to: newEmail,
-      envelope: {
-        from: 'eddie@finalbossxr.com',
-        to: newEmail,
-      },
       subject: "Email Updated Successfully",
       text: `Your email has been updated successfully.`,
       html: `
@@ -272,7 +230,7 @@ export const updateEmail = async (email: string, newEmail: string) => {
     // Send email asynchronously
     setImmediate(async () => {
       try {
-        await transporter.sendMail(successMailOptions);
+        await sendEmail(successMailOptions);
         console.log("Email update confirmation sent to:", newEmail);
       } catch (err) {
         console.error("Error sending email update confirmation:", err);
@@ -333,24 +291,10 @@ export const sixDigitCodeUpdateEmail = async (currentEmail: string, newEmail: st
     // 3️⃣ Generate random 6-digit code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // 4️⃣ Send email with Nodemailer to new email
-    const transporter = nodemailer.createTransport({
-      host: "mail.spacemail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: "eddie@finalbossxr.com",
-        pass: "bossfinaL7$",
-      },
-    });
-
+    // 4️⃣ Send email with SendGrid to new email
     const mailOptions = {
-      from: '"Cosmic Collisions" <eddie@finalbossxr.com>',
+      from: "eddie@finalbossxr.com",
       to: newEmail,
-      envelope: {
-        from: 'eddie@finalbossxr.com',
-        to: newEmail,
-      },
       subject: "Your 6-Digit Email Update Code",
       text: `Your email update code is: ${code}`,
       html: `
@@ -364,16 +308,31 @@ export const sixDigitCodeUpdateEmail = async (currentEmail: string, newEmail: st
     };
 
     console.log("Sending email update code:", mailOptions);
-    await transporter.sendMail(mailOptions);
+    
+    try {
+      await sendEmail(mailOptions);
+    } catch (emailErr) {
+      console.error("Error sending email:", emailErr);
+      return {
+        exists: true,
+        success: false,
+        message: "Failed to send verification email. Please check your email address and try again.",
+      };
+    }
 
     return {
       exists: true,
+      success: true,
       code,
       message: "Verification code sent to new email.",
     };
   } catch (err) {
     console.error("Error in sixDigitCodeUpdateEmail:", err);
-    throw new Error("Failed to send verification email.");
+    return {
+      exists: false,
+      success: false,
+      message: "An error occurred. Please try again.",
+    };
   }
 };
 
@@ -396,23 +355,9 @@ export const updateUsername = async (email: string, newUsername: string) => {
     });
 
     // Send success email
-    const transporter = nodemailer.createTransport({
-      host: "mail.spacemail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: "eddie@finalbossxr.com",
-        pass: "bossfinaL7$",
-      },
-    });
-
     const successMailOptions = {
-      from: '"Cosmic Collisions" <eddie@finalbossxr.com>',
+      from: "eddie@finalbossxr.com",
       to: email,
-      envelope: {
-        from: 'eddie@finalbossxr.com',
-        to: email,
-      },
       subject: "Username Updated Successfully",
       text: `Your username has been updated to ${newUsername} successfully.`,
       html: `
@@ -427,7 +372,7 @@ export const updateUsername = async (email: string, newUsername: string) => {
     // Send email asynchronously
     setImmediate(async () => {
       try {
-        await transporter.sendMail(successMailOptions);
+        await sendEmail(successMailOptions);
         console.log("Username update confirmation sent to:", email);
       } catch (err) {
         console.error("Error sending username update confirmation:", err);
@@ -480,24 +425,10 @@ export const sixDigitCodeUpdateUsername = async (email: string, newUsername: str
     // 3️⃣ Generate random 6-digit code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // 4️⃣ Send email with Nodemailer to current email
-    const transporter = nodemailer.createTransport({
-      host: "mail.spacemail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: "eddie@finalbossxr.com",
-        pass: "bossfinaL7$",
-      },
-    });
-
+    // 4️⃣ Send email with SendGrid to current email
     const mailOptions = {
-      from: '"Cosmic Collisions" <eddie@finalbossxr.com>',
+      from: "eddie@finalbossxr.com",
       to: email,
-      envelope: {
-        from: 'eddie@finalbossxr.com',
-        to: email,
-      },
       subject: "Your 6-Digit Username Update Code",
       text: `Your username update code is: ${code}`,
       html: `
@@ -511,7 +442,7 @@ export const sixDigitCodeUpdateUsername = async (email: string, newUsername: str
     };
 
     console.log("Sending username update code:", mailOptions);
-    await transporter.sendMail(mailOptions);
+    await sendEmail(mailOptions);
 
     return {
       exists: true,
@@ -543,23 +474,9 @@ export const deleteProfile = async (email: string) => {
     });
 
     // Send success email (before deletion, but since email is key, send now)
-    const transporter = nodemailer.createTransport({
-      host: "mail.spacemail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: "eddie@finalbossxr.com",
-        pass: "bossfinaL7$",
-      },
-    });
-
     const successMailOptions = {
-      from: '"Cosmic Collisions" <eddie@finalbossxr.com>',
+      from: "eddie@finalbossxr.com",
       to: email,
-      envelope: {
-        from: 'eddie@finalbossxr.com',
-        to: email,
-      },
       subject: "Profile Deleted Successfully",
       text: `Your profile has been deleted successfully.`,
       html: `
@@ -574,7 +491,7 @@ export const deleteProfile = async (email: string) => {
     // Send email asynchronously
     setImmediate(async () => {
       try {
-        await transporter.sendMail(successMailOptions);
+        await sendEmail(successMailOptions);
         console.log("Profile deletion confirmation sent to:", email);
       } catch (err) {
         console.error("Error sending profile deletion confirmation:", err);
@@ -622,24 +539,10 @@ export const sixDigitCodeDeleteProfile = async (email: string) => {
     // 2️⃣ Generate random 6-digit code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // 3️⃣ Send email with Nodemailer
-    const transporter = nodemailer.createTransport({
-      host: "mail.spacemail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: "eddie@finalbossxr.com",
-        pass: "bossfinaL7$",
-      },
-    });
-
+    // 3️⃣ Send email with SendGrid
     const mailOptions = {
-      from: '"Cosmic Collisions" <eddie@finalbossxr.com>',
+      from: "eddie@finalbossxr.com",
       to: email,
-      envelope: {
-        from: 'eddie@finalbossxr.com',
-        to: email,
-      },
       subject: "Your 6-Digit Profile Deletion Code",
       text: `Your profile deletion code is: ${code}`,
       html: `
@@ -654,7 +557,7 @@ export const sixDigitCodeDeleteProfile = async (email: string) => {
     };
 
     console.log("Sending profile deletion code:", mailOptions);
-    await transporter.sendMail(mailOptions);
+    await sendEmail(mailOptions);
 
     return {
       exists: true,
