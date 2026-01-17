@@ -15,27 +15,32 @@ export const addOrUpdateSurvivalScore = async (playerEmail: string, points: numb
 };
 
 export const getTopSurvival = async (limit: number = 10) => {
-  const results = await prisma.survivalLeaderboard.findMany({
-    orderBy: { points: "desc" },
-    take: limit,
-    include: {
-      player: {
-        select: {
-          username: true
+  try {
+    const results = await prisma.survivalLeaderboard.findMany({
+      orderBy: { points: "desc" },
+      take: limit,
+      include: {
+        player: {
+          select: {
+            username: true
+          }
         }
       }
-    }
-  });
-  
-  // Transform to include username at top level for frontend compatibility
-  return results.map(entry => ({
-    id: entry.id,
-    username: entry.player?.username ?? entry.playerEmail,
-    points: entry.points,
-    wave: entry.wave,
-    time: entry.time,
-    createdAt: entry.createdAt
-  }));
+    });
+    
+    // Transform to include username at top level for frontend compatibility
+    return results.map(entry => ({
+      id: entry.id,
+      username: entry.player?.username ?? entry.playerEmail ?? 'Unknown',
+      points: entry.points,
+      wave: entry.wave,
+      time: entry.time,
+      createdAt: entry.createdAt
+    }));
+  } catch (error) {
+    console.error('Error in getTopSurvival:', error);
+    throw error;
+  }
 };
 
 // ----- Flight Mode -----
@@ -51,23 +56,28 @@ export const addOrUpdateFlightScore = async (playerEmail: string, time: number) 
 };
 
 export const getTopFlight = async (limit: number = 10) => {
-  const results = await prisma.flightLeaderboard.findMany({
-    orderBy: { time: "asc" },
-    take: limit,
-    include: {
-      player: {
-        select: {
-          username: true
+  try {
+    const results = await prisma.flightLeaderboard.findMany({
+      orderBy: { time: "asc" },
+      take: limit,
+      include: {
+        player: {
+          select: {
+            username: true
+          }
         }
       }
-    }
-  });
-  
-  // Transform to include username at top level for frontend compatibility
-  return results.map(entry => ({
-    id: entry.id,
-    username: entry.player?.username ?? entry.playerEmail,
-    time: entry.time,
-    createdAt: entry.createdAt
-  }));
+    });
+    
+    // Transform to include username at top level for frontend compatibility
+    return results.map(entry => ({
+      id: entry.id,
+      username: entry.player?.username ?? entry.playerEmail ?? 'Unknown',
+      time: entry.time,
+      createdAt: entry.createdAt
+    }));
+  } catch (error) {
+    console.error('Error in getTopFlight:', error);
+    throw error;
+  }
 };
