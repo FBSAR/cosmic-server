@@ -4,8 +4,11 @@ import { getTopSurvival, addOrUpdateSurvivalScore } from '../../src/controllers/
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     if (req.method === 'GET') {
-      // ✅ Return top 10 survival leaderboard
-      const leaderboard = await getTopSurvival(10);
+      // ✅ Return paginated survival leaderboard
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 10));
+      
+      const leaderboard = await getTopSurvival(page, limit);
       return res.status(200).json(leaderboard);
     }
 

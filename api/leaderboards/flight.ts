@@ -4,8 +4,11 @@ import { getTopFlight, addOrUpdateFlightScore } from '../../src/controllers/lead
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     if (req.method === 'GET') {
-      // ✅ Return top 10 flight leaderboard
-      const leaderboard = await getTopFlight(10);
+      // ✅ Return paginated flight leaderboard
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 10));
+      
+      const leaderboard = await getTopFlight(page, limit);
       return res.status(200).json(leaderboard);
     }
 
