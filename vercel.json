@@ -1,9 +1,12 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/**/*.ts", "use": "@vercel/node" }
+    { "src": "api/**/*.ts", "use": "@vercel/node" },
+    { "src": "images/**", "use": "@vercel/static" }
   ],
   "routes": [
+    { "src": "/favicon.ico", "dest": "/images/coz_favicon.png" },
+    { "src": "/images/(.*)", "dest": "/images/$1" },
     { "src": "/api/players", "dest": "/api/players.ts" },
 
     { "src": "/api/auth/six-digit-code-login", "dest": "/api/auth/six-digit-code-login.ts" },
